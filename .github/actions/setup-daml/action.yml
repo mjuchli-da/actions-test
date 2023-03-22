@@ -1,0 +1,36 @@
+name: 'Setup DAML'
+description: 'Installs DAML SDK and caches the output'
+inputs:
+  version:
+    description: 'DAML version to install'
+    default: '2.6.0'
+  os:
+    description: 'OS to install DAML for'
+    default: 'linux'
+runs:
+  using: "composite"
+  steps:
+    - name: Cache DAML
+      id: cache-daml
+      uses: actions/cache@v3
+      with:
+        path: ~/.daml
+        key: daml-${{ inputs.version }}
+        restore-keys: |
+          daml-${{ inputs.version }}
+          daml
+
+    - name: Download DAML
+      if: steps.cache-daml.outputs.cache-hit != 'true'
+      shell: bash
+      run: curl -OL "https://github.com/digital-asset/daml/releases/download/v${{ inputs.version }}/daml-sdk-${{ inputs.version }}-${{ inputs.os }}.tar.gz"
+
+    - name: Extract and Install DAML
+      if: steps.cache-daml.outputs.cache-hit != 'true'
+      shell: bash
+      run:  |
+        tar -xzf daml-sdk-${{ inputs.version }}-${{ inputs.os }}.tar.gz
+        ./sdk-${{ inputs.version }}/install.sh
+
+    - run: echo "$HOME/.daml/bin" >> $GITHUB_PATH
+      shell: bash
