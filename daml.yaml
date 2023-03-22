@@ -1,0 +1,12 @@
+sdk-version: 2.6.0
+name: actions-test
+version: 1.0.0
+source: daml/Main.daml
+scenario: Main:main
+parties:
+- Alice
+- Bob
+dependencies:
+- daml-prim
+- daml-stdlib
+- daml-script

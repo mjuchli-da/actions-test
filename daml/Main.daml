@@ -1,0 +1,11 @@
+module Main where
+
+import Daml.Script
+import Token
+
+main : Script ()
+main = do
+  alice <- allocateParty "Alice"
+  submit alice do
+    createCmd Token with owner = alice
+  pure ()
